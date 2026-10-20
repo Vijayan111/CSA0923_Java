@@ -1,0 +1,25 @@
+Test case                                      Expected           Actual             Result
+TwoWheeler 130 min                             30.0               30.0               PASS
+Car 130 min                                    90.0               90.0               PASS
+ElectricCar 130 min + 10 kWh                   210.0              210.0              PASS
+Zero minutes (boundary)                        0.0                0.0                PASS
+Exactly 60 min car (slab boundary)             30.0               30.0               PASS
+61 min car (just over the boundary)            60.0               60.0               PASS
+Exactly 480 min car (daily cap reached)        240.0              240.0              PASS
+600 min car (cap applies)                      240.0              240.0              PASS
+1500 min car (1 day + 60 min)                  270.0              270.0              PASS
+Monthly pass car 130 min                       0.0                0.0                PASS
+Monthly pass EV 130 min + 10 kWh               120.0              120.0              PASS
+Last free slot taken: ticket 2 floor/slot      1/0                1/0                PASS
+Facility full -> third vehicle rejected        IllegalState       IllegalState       PASS
+Slot reused after exit                         0/0                0/0                PASS
+Ticket numbers increase, none reused           true               true               PASS
+Unknown vehicle type 'TRUCK'                   IllegalArgument    IllegalArgument    PASS
+Duplicate registration L2                      IllegalState       IllegalState       PASS
+Exit of vehicle not parked                     IllegalState       IllegalState       PASS
+Invalid slot release(9,0)                      false              false              PASS
+Invalid slot release(0,-1)                     false              false              PASS
+Double release of the same slot                false              false              PASS
+Day collection (hand: 10+90+300+0+80)          480.0              480.0              PASS
+No vehicles left inside after the day          0                  0                  PASS
+PASSED 23 of 23

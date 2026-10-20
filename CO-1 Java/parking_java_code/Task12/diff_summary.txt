@@ -1,0 +1,9 @@
+Only in parking/app: Tests12.java
+Only in parking/model: DeliveryVan.java
+Only in parking/model: EBike.java
+Only in parking/model: MonthlyPass.java
+Only in parking/model: OneDayPass.java
+Files parking/model/ParkingTicket.java and parking/model/ParkingTicket.java differ
+Only in parking/model: Pass.java
+Files parking/service/ParkingService.java and parking/service/ParkingService.java differ
+Files parking/service/VehicleFactory.java and parking/service/VehicleFactory.java differ

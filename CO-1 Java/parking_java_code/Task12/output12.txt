@@ -1,0 +1,23 @@
+Test case                                        Expected       Actual         Result
+E-bike 130 min (flat Rs 15)                      15.0           15.0           PASS
+E-bike 1 min                                     15.0           15.0           PASS
+E-bike 0 min                                     0.0            0.0            PASS
+Van 10:00-12:00 (both hours peak)                120.0          120.0          PASS
+Van 08:00-09:00 (starts before 9)                30.0           30.0           PASS
+Van 09:00-10:00 (starts exactly 9:00)            60.0           60.0           PASS
+Van 16:00-17:00 (starts 16:00)                   60.0           60.0           PASS
+Van 17:00-18:00 (starts exactly 17:00)           30.0           30.0           PASS
+Van 08:30-10:30 (blocks 8:30 and 9:30)           90.0           90.0           PASS
+Van 16:30-18:00 (blocks 16:30 and 17:30)         90.0           90.0           PASS
+Van 0 min                                        0.0            0.0            PASS
+Van 08:00-16:00 (8 h cap, 1 h off-peak + 7 peak) 450.0          450.0          PASS
+Car 09:00-12:10 unchanged by the new rule        120.0          120.0          PASS
+Visitor one-day pass, car 10 h same day          0.0            0.0            PASS
+Visitor one-day pass for another day             240.0          240.0          PASS
+One-day pass, stay crosses midnight              270.0          270.0          PASS
+One-day pass EV: parking free, charging 10 kWh   120.0          120.0          PASS
+Old monthly pass still free (boolean API)        0.0            0.0            PASS
+5 floors capacity                                200            200            PASS
+200th vehicle gets floor 4 slot 59               4/59           4/59           PASS
+201st vehicle rejected (null)                    null           null           PASS
+PASSED 21 of 21
