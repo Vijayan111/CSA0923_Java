@@ -1,0 +1,32 @@
+=== Attendance ===
+Unique students: 2
+
+=== Attendance_before ===
+Unique students: 3
+
+=== ContractTests ===
+T1 distinct scans, no hashCode     predicted=3  actual=3  MATCH
+    no duplicates were scanned, so nothing is exposed   [equals() calls: 0]
+T2 repeat scans, no hashCode       predicted=6  actual=6  MATCH
+    identity hash codes differ, so equals() is never reached   [equals() calls: 0]
+T2 repeat scans, with hashCode     predicted=3  actual=3  MATCH
+    same hash -> same bucket -> equals() true -> duplicate rejected   [equals() calls: 3]
+T3 after regNo changed: contains(m) = false  (predicted false)
+T3 mutate key, add again           predicted=2  actual=2  MATCH
+    object sits in the old bucket, lookup uses the new hash   [equals() calls: 0]
+T4 TreeSet by name (2 diff regNo)  predicted=1  actual=1  MATCH
+    TreeSet treats compare()==0 as duplicate: it says 1 (HashSet says 2)   [equals() calls: 0]
+
+=== DedupBench ===
+De-duplication: n unique students, 2n scans (each student scanned twice)
+structure                           n    ns per scan   alloc (MB)     size
+HashSet<Student>                10000          281.6          0.4    10000
+TreeSet + Comparator            10000         1685.1          0.4    10000
+HashMap<String,Student>         10000          521.7          0.4    10000
+HashSet<Student>               100000         1126.2          5.1   100000
+TreeSet + Comparator           100000         2007.8          3.8   100000
+HashMap<String,Student>        100000          270.0          5.1   100000
+HashSet<Student>              1000000          798.2         84.2  1000000
+TreeSet + Comparator          1000000         2580.3         38.1  1000000
+HashMap<String,Student>       1000000          212.8         46.5  1000000
+

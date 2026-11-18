@@ -1,40 +1,240 @@
-// Task 2 alternative - jagged array vs one-dimensional array vs ArrayList<String[]>
 import java.util.ArrayList;
 import java.util.List;
 
 public class SlotLayoutBench {
-    public static void main(String[] args) {
-        int[] slotsPerFloor = {20, 30, 40, 50, 60};     // floors with different sizes
-        int F = slotsPerFloor.length, total = 0;
-        int[] start = new int[F + 1];                   // prefix sums, needed for the 1-D layout
-        for (int f = 0; f < F; f++) { start[f] = total; total += slotsPerFloor[f]; }
-        start[F] = total;
 
-        String[][] jagged = new String[F][];
-        List<String[]> list = new ArrayList<>();
-        String[] flat = new String[total];
-        for (int f = 0; f < F; f++) { jagged[f] = new String[slotsPerFloor[f]]; list.add(new String[slotsPerFloor[f]]); }
+    // Each floor can have a different number of slots.
+    private static final int[] SLOTS_PER_FLOOR = {20, 30, 40, 50, 60};
 
-        // what a fixed formula floor*slotsPerFloor+slot would give for floor 4, slot 59 with S=60 : 299 (outside array of 200)
-        System.out.println("total slots = " + total + "; naive formula 4*60+59 = " + (4 * 60 + 59) + " -> out of range");
-        System.out.println("prefix formula start[4]+59 = " + (start[4] + 59));
+    private static final int FLOORS = SLOTS_PER_FLOOR.length;
+    private static final int TOTAL_SLOTS = 200;
 
-        int N = 50_000_000;
-        long sink = 0;
-        for (int w = 0; w < 2; w++) sink += run(jagged, list, flat, start, F, slotsPerFloor, 5_000_000);   // warm up
-        long t0 = System.nanoTime();
-        for (int i = 0; i < N; i++) { int f = i % F, s = i % slotsPerFloor[f]; if (jagged[f][s] == null) sink++; }
-        long t1 = System.nanoTime();
-        for (int i = 0; i < N; i++) { int f = i % F, s = i % slotsPerFloor[f]; if (flat[start[f] + s] == null) sink++; }
-        long t2 = System.nanoTime();
-        for (int i = 0; i < N; i++) { int f = i % F, s = i % slotsPerFloor[f]; if (list.get(f)[s] == null) sink++; }
-        long t3 = System.nanoTime();
-        System.out.printf("locate slot, ns per access: jagged %.2f | 1-D with offsets %.2f | ArrayList<String[]> %.2f  (sink %d)%n",
-                (t1 - t0) / (double) N, (t2 - t1) / (double) N, (t3 - t2) / (double) N, sink);
+    private static final int[] START = new int[FLOORS];
+
+    // Representation 1: Jagged two-dimensional array.
+    private static final String[][] jagged = new String[FLOORS][];
+
+    // Representation 2: One-dimensional array.
+    private static final String[] flat = new String[TOTAL_SLOTS];
+
+    // Representation 3: ArrayList containing one array per floor.
+    private static final List<String[]> arrayList = new ArrayList<>();
+
+    // Used to prevent the benchmark results from being ignored.
+    private static volatile int sink = 0;
+
+    static {
+        int offset = 0;
+
+        for (int f = 0; f < FLOORS; f++) {
+
+            START[f] = offset;
+
+            jagged[f] = new String[SLOTS_PER_FLOOR[f]];
+
+            arrayList.add(new String[SLOTS_PER_FLOOR[f]]);
+
+            offset += SLOTS_PER_FLOOR[f];
+        }
+
+        if (offset != TOTAL_SLOTS) {
+            throw new IllegalStateException("Incorrect total slot count");
+        }
     }
-    static long run(String[][] j, List<String[]> l, String[] fl, int[] st, int F, int[] spf, int n) {
-        long s = 0;
-        for (int i = 0; i < n; i++) { int f = i % F, x = i % spf[f]; if (j[f][x] == null) s++; if (fl[st[f] + x] == null) s++; if (l.get(f)[x] == null) s++; }
-        return s;
+
+    // Calculate the flattened index for a floor and slot.
+    private static int flatIndex(int floor, int slot) {
+
+        if (floor < 0 || floor >= FLOORS) {
+            return -1;
+        }
+
+        if (slot < 0 || slot >= SLOTS_PER_FLOOR[floor]) {
+            return -1;
+        }
+
+        return START[floor] + slot;
+    }
+
+    // Find a free slot using the jagged array.
+    private static int findJagged(int floor, int slot) {
+
+        if (floor < 0 || floor >= FLOORS) {
+            return -1;
+        }
+
+        if (slot < 0 || slot >= jagged[floor].length) {
+            return -1;
+        }
+
+        return jagged[floor][slot] == null ? 1 : 0;
+    }
+
+    // Find a free slot using the flattened array.
+    private static int findFlat(int floor, int slot) {
+
+        int index = flatIndex(floor, slot);
+
+        if (index == -1) {
+            return -1;
+        }
+
+        return flat[index] == null ? 1 : 0;
+    }
+
+    // Find a free slot using ArrayList<String[]>.
+    private static int findArrayList(int floor, int slot) {
+
+        if (floor < 0 || floor >= arrayList.size()) {
+            return -1;
+        }
+
+        String[] floorSlots = arrayList.get(floor);
+
+        if (slot < 0 || slot >= floorSlots.length) {
+            return -1;
+        }
+
+        return floorSlots[slot] == null ? 1 : 0;
+    }
+
+    private static long benchmarkJagged(int floor, int slot, int iterations) {
+
+        long start = System.nanoTime();
+
+        int result = 0;
+
+        for (int i = 0; i < iterations; i++) {
+            result += findJagged(floor, slot);
+        }
+
+        long end = System.nanoTime();
+
+        sink = result;
+
+        return (end - start) / iterations;
+    }
+
+    private static long benchmarkFlat(int floor, int slot, int iterations) {
+
+        long start = System.nanoTime();
+
+        int result = 0;
+
+        for (int i = 0; i < iterations; i++) {
+            result += findFlat(floor, slot);
+        }
+
+        long end = System.nanoTime();
+
+        sink = result;
+
+        return (end - start) / iterations;
+    }
+
+    private static long benchmarkArrayList(
+            int floor, int slot, int iterations) {
+
+        long start = System.nanoTime();
+
+        int result = 0;
+
+        for (int i = 0; i < iterations; i++) {
+            result += findArrayList(floor, slot);
+        }
+
+        long end = System.nanoTime();
+
+        sink = result;
+
+        return (end - start) / iterations;
+    }
+
+    public static void main(String[] args) {
+
+        System.out.println("Total floors = " + FLOORS);
+        System.out.println("Total slots = " + TOTAL_SLOTS);
+
+        // Demonstrate why the naive formula fails.
+        int floor = 4;
+        int slot = 59;
+
+        int naiveIndex = floor * 60 + slot;
+        int correctIndex = flatIndex(floor, slot);
+
+        System.out.println(
+                "Naive formula: " + floor + "*60+" + slot
+                        + " = " + naiveIndex
+                        + " -> " + (naiveIndex >= TOTAL_SLOTS
+                        ? "out of range" : "valid")
+        );
+
+        System.out.println(
+                "Prefix formula: START[" + floor + "]+" + slot
+                        + " = " + correctIndex
+        );
+
+        // Verify that the flattened index points to the same slot.
+        jagged[floor][slot] = "TN04GH4444";
+        flat[correctIndex] = "TN04GH4444";
+        arrayList.get(floor)[slot] = "TN04GH4444";
+
+        System.out.println("\nValidation:");
+
+        System.out.println(
+                "Jagged array: " + jagged[floor][slot]
+        );
+
+        System.out.println(
+                "Flat array: " + flat[correctIndex]
+        );
+
+        System.out.println(
+                "ArrayList: " + arrayList.get(floor)[slot]
+        );
+
+        // Validate invalid positions.
+        System.out.println("\nInvalid position tests:");
+
+        System.out.println("Invalid floor: " + flatIndex(5, 0));
+        System.out.println("Invalid slot: " + flatIndex(4, 60));
+
+        // Benchmark a valid position.
+        int testFloor = 4;
+        int testSlot = 58;
+        int iterations = 5_000_000;
+
+        // Warm-up to allow the JVM to optimize the methods.
+        for (int i = 0; i < 3; i++) {
+            benchmarkJagged(testFloor, testSlot, 100_000);
+            benchmarkFlat(testFloor, testSlot, 100_000);
+            benchmarkArrayList(testFloor, testSlot, 100_000);
+        }
+
+        long jaggedTime =
+                benchmarkJagged(testFloor, testSlot, iterations);
+
+        long flatTime =
+                benchmarkFlat(testFloor, testSlot, iterations);
+
+        long arrayListTime =
+                benchmarkArrayList(testFloor, testSlot, iterations);
+
+        System.out.println("\nBenchmark results:");
+        System.out.println("Iterations per representation = " + iterations);
+
+        System.out.println(
+                "Jagged array          = " + jaggedTime + " ns/access"
+        );
+
+        System.out.println(
+                "1-D array with offsets = " + flatTime + " ns/access"
+        );
+
+        System.out.println(
+                "ArrayList<String[]>   = " + arrayListTime + " ns/access"
+        );
+
+        System.out.println("Benchmark sink = " + sink);
     }
 }

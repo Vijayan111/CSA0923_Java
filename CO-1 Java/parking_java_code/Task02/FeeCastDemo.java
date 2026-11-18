@@ -1,30 +1,74 @@
-// Task 2 - casting and integer-division risks in fee calculation
 public class FeeCastDemo {
+
     public static void main(String[] args) {
-        int minutes = 130;
-        double rate = 30;                               // Rs per hour (car)
 
-        int h1 = minutes / 60;                          // integer division: 2
-        System.out.println("wrong 1  minutes/60 * rate               = " + h1 * rate);
+        int minutes = 121;
+        double rate = 30.0;
 
-        double h2 = (double) (minutes / 60);            // cast AFTER the division: still 2.0
-        System.out.println("wrong 2  (double)(minutes/60) * rate     = " + h2 * rate);
+        // Wrong 1: Integer division happens before multiplication.
+        double wrong1 = (minutes / 60) * rate;
 
-        double h3 = Math.ceil(minutes / 60);            // ceil of an already truncated 2
-        System.out.println("wrong 3  Math.ceil(minutes/60) * rate    = " + h3 * rate);
+        // Wrong 2: Casting after integer division does not fix it.
+        double wrong2 = (double) (minutes / 60) * rate;
 
-        double h4 = Math.ceil((double) minutes / 60);   // right, but floating point
-        System.out.println("ok       Math.ceil((double)m/60) * rate  = " + h4 * rate);
+        // Wrong 3: Math.ceil receives an already truncated result.
+        double wrong3 = Math.ceil(minutes / 60) * rate;
 
-        int hours = (minutes + 59) / 60;                // integer ceiling: no double needed
-        System.out.println("chosen   (minutes+59)/60 * rate          = " + hours * rate);
+        // Correct 1: Convert to double before division.
+        double correct1 = Math.ceil((double) minutes / 60) * rate;
 
-        // precision: float and narrowing
-        int fromDouble = (int) 29.99;                   // truncates, does not round
-        float f = 0.1f * 3;
-        System.out.println("(int) 29.99 = " + fromDouble + ",  0.1f*3 = " + f + ",  0.1*3 = " + 0.1 * 3);
-        long bigMinutes = 3_000_000_000L;               // about 5707 years, shows int overflow
-        System.out.println("(int) 3_000_000_000L = " + (int) bigMinutes);
-        System.out.println("Rs 0.1 + 0.2 in double = " + (0.1 + 0.2));
+        // Correct 2: Integer arithmetic for positive parking durations.
+        int billableHours = (minutes + 59) / 60;
+        double correct2 = billableHours * rate;
+
+        System.out.println("wrong 1  minutes/60 * rate                 = " + wrong1);
+        System.out.println("wrong 2  (double)(minutes/60) * rate       = " + wrong2);
+        System.out.println("wrong 3  Math.ceil(minutes/60) * rate      = " + wrong3);
+
+        System.out.println(
+                "ok       Math.ceil((double)minutes/60) * rate = "
+                        + correct1
+        );
+
+        System.out.println(
+                "chosen   (minutes+59)/60 * rate           = "
+                        + correct2
+        );
+
+        // Demonstrate casting and floating-point precision.
+        System.out.println("(int) 29.99 = " + (int) 29.99);
+
+        float floatResult = 0.1f * 3;
+        double doubleResult = 0.1 * 3;
+
+        System.out.println("0.1f * 3 = " + floatResult);
+        System.out.println("0.1 * 3 = " + doubleResult);
+
+        // Demonstrate integer overflow when narrowing a long to int.
+        long largeValue = 3_000_000_000L;
+
+        System.out.println(
+                "(int) 3_000_000_000L = " + (int) largeValue
+        );
+
+        // Demonstrate floating-point precision.
+        double sum = 0.1 + 0.2;
+
+        System.out.println("Rs 0.1 + 0.2 in double = " + sum);
+
+        // Validate the calculation using additional test cases.
+        System.out.println("\nAdditional parking fee tests:");
+
+        int[] testMinutes = {0, 1, 60, 61, 120, 121};
+
+        for (int m : testMinutes) {
+            int hours = (m + 59) / 60;
+            double fee = hours * rate;
+
+            System.out.println(
+                    m + " minutes -> " + hours
+                            + " billable hours -> Rs " + fee
+            );
+        }
     }
 }

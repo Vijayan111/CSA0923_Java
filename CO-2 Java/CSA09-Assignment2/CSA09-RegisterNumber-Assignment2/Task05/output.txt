@@ -1,0 +1,25 @@
+=== ComparatorTests ===
+Data set 1 (ties at every level), comparator chain:
+[Lions(12,5), Wolves(12,5), Hawks(12,2), Bears(9,3), Sharks(9,3), Tigers(9,3), Foxes(6,-2), Owls(6,-2)]
+same result after reversing the input: true
+
+Data set 2a - faulty comparator that ignores the tie-breakers (input order decides):
+[Lions(12,5), Wolves(12,5), Hawks(12,2), Sharks(9,3), Tigers(9,3), Bears(9,3), Foxes(6,-2), Owls(6,-2)]
+[Hawks(12,2), Wolves(12,5), Lions(12,5), Bears(9,3), Tigers(9,3), Sharks(9,3), Owls(6,-2), Foxes(6,-2)]
+same result for both inputs: false
+
+Data set 2b - faulty comparator using subtraction (points near int limits):
+subtraction : [C(5,0), B(-2000000000,0), A(2000000000,0)]
+Integer.compare: [A(2000000000,0), C(5,0), B(-2000000000,0)]
+
+Wildcard: List<? extends T> into Leaderboard<Team>, bounded min:
+[Kites(7,1), Ants(3,0), Zebras(3,0)]   best by Comparable: Kites(7,1)
+
+Sorting 500,000 random teams (ms, median of 5 runs):
+one sort, Comparator chain            394.0
+one sort, Comparable.compareTo        280.3
+three stable sorts (name,gd,pts)      556.1
+
+=== LeaderboardDemo ===
+[Eagles(9,6), Bisons(9,4), Panthers(9,4), Cobras(6,1)]
+

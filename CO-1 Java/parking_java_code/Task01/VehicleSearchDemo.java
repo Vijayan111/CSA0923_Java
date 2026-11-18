@@ -1,60 +1,315 @@
-// Task 1 - vehicles as objects versus parallel arrays: search and per-vehicle memory
+
+// Task 1: Vehicle Objects vs Parallel Arrays
+// Campus Smart-Parking System
+// Demonstrates searching, memory usage, and extensibility.
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class VehicleSearchDemo {
-    static class Vehicle {                          // object design
-        final String regNo; final String type; final int entryMinute;
-        Vehicle(String r, String t, int e) { regNo = r; type = t; entryMinute = e; }
+
+    // OBJECT-ORIENTED DESIGN
+    static class Vehicle {
+        private final String regNo;
+        private final String type;
+        private final int entryMinute;
+
+        // Additional attribute
+        private final boolean electric;
+
+        public Vehicle(String regNo, String type, int entryMinute,
+                       boolean electric) {
+            this.regNo = regNo;
+            this.type = type;
+            this.entryMinute = entryMinute;
+            this.electric = electric;
+        }
+
+        public String getRegNo() {
+            return regNo;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public int getEntryMinute() {
+            return entryMinute;
+        }
+
+        public boolean isElectric() {
+            return electric;
+        }
     }
 
-    static long used() {
-        System.gc(); System.gc();
-        Runtime r = Runtime.getRuntime();
-        return r.totalMemory() - r.freeMemory();
+    // OBJECT-ORIENTED SEARCH
+    static int findObject(List<Vehicle> vehicles, String regNo) {
+        for (int i = 0; i < vehicles.size(); i++) {
+            if (vehicles.get(i).getRegNo().equals(regNo)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // PARALLEL-ARRAY SEARCH
+    static int findArray(String[] regNos, String target) {
+        for (int i = 0; i < regNos.length; i++) {
+            if (regNos[i].equals(target)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // APPROXIMATE USED HEAP MEMORY
+    static long usedMemory() {
+        Runtime runtime = Runtime.getRuntime();
+        return runtime.totalMemory() - runtime.freeMemory();
+    }
+
+    static void requestGC() {
+        System.gc();
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public static void main(String[] args) {
-        int[] sizes = {1_000, 10_000, 100_000, 1_000_000};
-        System.out.println("n | object search (ns/search) | parallel-array search (ns/search)");
-        for (int n : sizes) {
-            String[] reg = new String[n]; String[] type = new String[n]; int[] entry = new int[n];
-            List<Vehicle> list = new ArrayList<>(n);
-            for (int i = 0; i < n; i++) {
-                reg[i] = "TN" + i; type[i] = (i % 3 == 0) ? "CAR" : "BIKE"; entry[i] = i % 1440;
-                list.add(new Vehicle(reg[i], type[i], entry[i]));
-            }
-            String target = "TN" + (n - 1);          // worst case: last element
-            int searches = Math.max(5, 2_000_000 / n);
-            long sink = 0;
-            for (int w = 0; w < 3; w++) { sink += findObj(list, target) + findArr(reg, target); }   // warm up
-            long t0 = System.nanoTime();
-            for (int s = 0; s < searches; s++) sink += findObj(list, target);
-            long t1 = System.nanoTime();
-            for (int s = 0; s < searches; s++) sink += findArr(reg, target);
-            long t2 = System.nanoTime();
-            System.out.printf("%d | %d | %d   (sink %d)%n", n, (t1 - t0) / searches, (t2 - t1) / searches, sink);
+
+        System.out.println("CAMPUS SMART-PARKING SYSTEM");
+        System.out.println("Vehicle Objects vs Parallel Arrays");
+        System.out.println();
+
+        // ------------------------------------------------
+        // PART 1: Demonstrate both designs
+        // ------------------------------------------------
+
+        List<Vehicle> vehicles = new ArrayList<>();
+
+        vehicles.add(new Vehicle("TN101", "CAR", 540, false));
+        vehicles.add(new Vehicle("TN102", "BIKE", 560, false));
+        vehicles.add(new Vehicle("TN103", "EV", 600, true));
+
+        String[] regNos = {"TN101", "TN102", "TN103"};
+        String[] types = {"CAR", "BIKE", "EV"};
+        int[] entryTimes = {540, 560, 600};
+        boolean[] electric = {false, false, true};
+
+        String target = "TN103";
+
+        int objectIndex = findObject(vehicles, target);
+        int arrayIndex = findArray(regNos, target);
+
+        System.out.println("Search demonstration");
+        System.out.println("--------------------");
+
+        System.out.println("Target registration number: " + target);
+        System.out.println("Object design index: " + objectIndex);
+        System.out.println("Parallel-array index: " + arrayIndex);
+
+        if (objectIndex != -1) {
+            Vehicle v = vehicles.get(objectIndex);
+
+            System.out.println("Vehicle type: " + v.getType());
+            System.out.println("Entry minute: " + v.getEntryMinute());
+            System.out.println("Electric vehicle: " + v.isElectric());
         }
 
-        // approximate heap per vehicle (strings are shared by both designs and counted in both)
-        int n = 200_000;
-        long b0 = used();
-        List<Vehicle> objs = new ArrayList<>(n);
-        for (int i = 0; i < n; i++) objs.add(new Vehicle("TN" + i, "CAR", i % 1440));
-        long b1 = used();
-        String[] r = new String[n]; String[] t = new String[n]; int[] e = new int[n];
-        for (int i = 0; i < n; i++) { r[i] = "TN" + i; t[i] = "CAR"; e[i] = i % 1440; }
-        long b2 = used();
-        System.out.println("approx bytes per vehicle, objects        : " + (b1 - b0) / n);
-        System.out.println("approx bytes per vehicle, parallel arrays: " + (b2 - b1) / n);
-        System.out.println(objs.size() + r.length + t.length + e.length > 0 ? "" : "");
-    }
-    static int findObj(List<Vehicle> l, String reg) {
-        for (int i = 0; i < l.size(); i++) if (l.get(i).regNo.equals(reg)) return i;
-        return -1;
-    }
-    static int findArr(String[] regs, String reg) {
-        for (int i = 0; i < regs.length; i++) if (regs[i].equals(reg)) return i;
-        return -1;
+        if (arrayIndex != -1) {
+            System.out.println("Array vehicle type: " + types[arrayIndex]);
+            System.out.println("Array entry minute: "
+                    + entryTimes[arrayIndex]);
+            System.out.println("Array electric vehicle: "
+                    + electric[arrayIndex]);
+        }
+
+        System.out.println();
+
+        // ------------------------------------------------
+        // PART 2: Search-time comparison
+        // ------------------------------------------------
+
+        int[] sizes = {1000, 10000, 100000, 500000};
+
+        System.out.println("Search-time comparison");
+        System.out.println("----------------------");
+
+        System.out.printf("%-12s %-25s %-28s%n",
+                "Vehicles", "Objects (ns/search)",
+                "Parallel arrays (ns/search)");
+
+        for (int n : sizes) {
+
+            String[] registrations = new String[n];
+            List<Vehicle> objectList = new ArrayList<>(n);
+
+            for (int i = 0; i < n; i++) {
+                String registration = "TN" + i;
+
+                registrations[i] = registration;
+
+                objectList.add(new Vehicle(
+                        registration,
+                        (i % 3 == 0) ? "CAR" : "BIKE",
+                        i % 1440,
+                        i % 5 == 0
+                ));
+            }
+
+            // Last element produces a worst-case linear search.
+            String searchTarget = "TN" + (n - 1);
+
+            // Keep the number of comparisons manageable.
+            int searches = Math.max(10, 1000000 / n);
+
+            // Warm-up to reduce JVM startup effects.
+            long sink = 0;
+
+            for (int w = 0; w < 3; w++) {
+                sink += findObject(objectList, searchTarget);
+                sink += findArray(registrations, searchTarget);
+            }
+
+            // Measure object search.
+            long startObject = System.nanoTime();
+
+            for (int i = 0; i < searches; i++) {
+                sink += findObject(objectList, searchTarget);
+            }
+
+            long endObject = System.nanoTime();
+
+            // Measure parallel-array search.
+            long startArray = System.nanoTime();
+
+            for (int i = 0; i < searches; i++) {
+                sink += findArray(registrations, searchTarget);
+            }
+
+            long endArray = System.nanoTime();
+
+            long objectTime =
+                    (endObject - startObject) / searches;
+
+            long arrayTime =
+                    (endArray - startArray) / searches;
+
+            System.out.printf("%-12d %-25d %-28d%n",
+                    n, objectTime, arrayTime);
+
+            // Prevent results from being entirely unused.
+            if (sink == Long.MIN_VALUE) {
+                System.out.println(sink);
+            }
+        }
+
+        System.out.println();
+
+        // ------------------------------------------------
+        // PART 3: Approximate memory comparison
+        // ------------------------------------------------
+
+        int n = 100000;
+
+        System.out.println("Approximate memory comparison");
+        System.out.println("-----------------------------");
+
+        // Measure the object-based representation.
+        requestGC();
+        long beforeObjects = usedMemory();
+
+        List<Vehicle> objectList = new ArrayList<>(n);
+
+        for (int i = 0; i < n; i++) {
+            objectList.add(new Vehicle(
+                    "TN" + i,
+                    "CAR",
+                    i % 1440,
+                    false
+            ));
+        }
+
+        requestGC();
+        long afterObjects = usedMemory();
+
+        long objectMemory = Math.max(0,
+                afterObjects - beforeObjects);
+
+        // Release the object-based data before measuring arrays.
+        objectList = null;
+        requestGC();
+
+        long beforeArrays = usedMemory();
+
+        String[] arrayRegNos = new String[n];
+        String[] arrayTypes = new String[n];
+        int[] arrayEntryTimes = new int[n];
+        boolean[] arrayElectric = new boolean[n];
+
+        for (int i = 0; i < n; i++) {
+            arrayRegNos[i] = "TN" + i;
+            arrayTypes[i] = "CAR";
+            arrayEntryTimes[i] = i % 1440;
+            arrayElectric[i] = false;
+        }
+
+        requestGC();
+        long afterArrays = usedMemory();
+
+        long arrayMemory = Math.max(0,
+                afterArrays - beforeArrays);
+
+        System.out.println("Number of vehicles: " + n);
+
+        System.out.printf(
+                "Object design: approximately %.2f bytes/vehicle%n",
+                objectMemory / (double) n
+        );
+
+        System.out.printf(
+                "Parallel arrays: approximately %.2f bytes/vehicle%n",
+                arrayMemory / (double) n
+        );
+
+        System.out.println();
+        System.out.println(
+                "Note: Heap measurements are approximate and depend "
+                + "on JVM behaviour."
+        );
+
+        // ------------------------------------------------
+        // PART 4: Complexity analysis
+        // ------------------------------------------------
+
+        System.out.println();
+        System.out.println("THEORETICAL COMPLEXITY");
+        System.out.println("----------------------");
+
+        System.out.println(
+                "Registration search using objects: O(n)"
+        );
+
+        System.out.println(
+                "Registration search using arrays: O(n)"
+        );
+
+        System.out.println(
+                "Accessing an attribute after locating a vehicle: O(1)"
+        );
+
+        System.out.println(
+                "Appending to an ArrayList: O(1) amortized"
+        );
+
+        System.out.println(
+                "Appending to a full fixed-size array: O(n) if copied"
+        );
+
+        System.out.println();
+        System.out.println("Program completed.");
     }
 }

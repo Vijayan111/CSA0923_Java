@@ -1,0 +1,14 @@
+=== PlaylistRedesign ===
+Correctness: GapPlaylist == ArrayList after 20,000 random add/remove: true
+
+Original (ArrayList.add(i, x)) vs redesign (GapPlaylist) - 10000 inserts, median of 5 runs
+cursor pattern            n |  ArrayList    elems moved | GapPlaylist    elems moved | speed-up
+local (+-5 songs)     10000 |     9.89 ms      100081730 |     0.13 ms          33153 | x76.1
+local (+-5 songs)    100000 |    94.55 ms      550081730 |     0.14 ms          78153 | x672.7
+local (+-5 songs)    400000 |   204.61 ms     2050081730 |     0.16 ms         228153 | x1241.3
+random position       10000 |     7.82 ms       75356818 |     7.02 ms       49673829 | x1.1
+random position      100000 |    54.38 ms      529807421 |    36.55 ms      352614723 | x1.5
+random position      400000 |   190.81 ms     2012593211 |   145.43 ms     1344244171 | x1.3
+
+Extra memory: GapPlaylist keeps its gap (up to capacity - size) free; ArrayList also over-allocates (about 1.5x on growth).
+

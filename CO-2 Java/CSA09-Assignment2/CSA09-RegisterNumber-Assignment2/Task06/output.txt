@@ -1,0 +1,25 @@
+=== Triage ===
+Meena(S1) Kumar(S1) Lata(S2) Ravi(S3) John(S3) Asha(S5)
+
+=== TriageStudy ===
+Hand-worked order : Meena Kumar Priya Lata Dev Ravi John Asha
+printing the queue: [Meena(S1), Kumar(S1), Lata(S2), Priya(S1), Ravi(S3), John(S3), Dev(S2), Asha(S5)]
+   ^ internal heap order, not treatment order
+poll() order      : Meena Kumar Priya Lata Dev Ravi John Asha
+
+PriorityQueue cost per operation (ns, median of 5 runs)
+         n          add         poll
+     10000           28          185
+    100000           40          374
+   1000000           28          412
+
+Starvation test: Asha (S5) waits; one S1 patient arrives and one is served every tick
+strict rule        : Asha NOT served in 2000 ticks
+aging rule (W=50) : Asha served at tick 200
+
+Alternative designs: n admits then n serves (ns per operation)
+       n | PriorityQueue add/poll | sorted LinkedList a/s  | 5 FIFO queues add/poll
+   10000 |        121         173 |      18551           6 |         25          17
+   50000 |         31         384 |     257665          19 |         13           4
+  100000 |         32         252 |     270890           9 |          7           7
+

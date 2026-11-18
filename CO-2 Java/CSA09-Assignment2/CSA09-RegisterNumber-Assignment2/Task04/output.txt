@@ -1,0 +1,32 @@
+=== PharmacyBench ===
+Order check (added: 405 102 733 220 518)
+HashMap        keys: [405, 102, 518, 220, 733]
+TreeMap        keys: [102, 220, 405, 518, 733]   <- code order
+LinkedHashMap  keys: [405, 102, 733, 220, 518]   <- insertion order
+
+n = 10000 medicines   (times in ms, median of 7 runs; put in ns per entry)
+                              HashMap    TreeMap  LinkedHashMap   sorted array
+put (ns per entry)                408        750            650       1428 ns*
+100,000 lookups (ms)             0.81      22.85           0.78          11.90
+report: code order (ms)          1.07       0.78           4.90           0.26
+report: added order (ms)         0.79       2.04           0.72 needs extra list
+ns per lookup                       8        228              8            119
+
+n = 100000 medicines   (times in ms, median of 7 runs; put in ns per entry)
+                              HashMap    TreeMap  LinkedHashMap   sorted array
+put (ns per entry)                203        616            760      14950 ns*
+100,000 lookups (ms)             8.35      27.05           1.92          12.08
+report: code order (ms)         16.40       5.83          24.06           5.90
+report: added order (ms)        11.29      30.57           5.66 needs extra list
+ns per lookup                      83        271             19            121
+
+n = 1000000 medicines   (times in ms, median of 7 runs; put in ns per entry)
+                              HashMap    TreeMap  LinkedHashMap   sorted array
+put (ns per entry)                333        765            455     188644 ns*
+100,000 lookups (ms)             4.41      93.11           3.09          19.08
+report: code order (ms)         56.21      44.09         455.70          21.09
+report: added order (ms)       189.89    1116.59         184.35 needs extra list
+ns per lookup                      44        931             31            191
+
+* sorted array: one insertion of a new code (binary search + arraycopy shift), ns
+
