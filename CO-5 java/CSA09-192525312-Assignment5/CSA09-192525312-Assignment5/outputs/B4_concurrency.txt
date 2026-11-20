@@ -1,0 +1,3 @@
+TEXT FILE : 4 counters x 500 passes = 2000 issued
+            lines in file = 2000, distinct pass IDs = 1992, DUPLICATE IDs = 8, damaged lines = 0
+DATABASE  : rows = 2000, distinct pass numbers = 2000, range 1..2000, DUPLICATES = 0

@@ -1,0 +1,18 @@
+findAll()        : 
+   192525312 Vijayan P CSE 8.4
+   192525313 Divya CSE 9.1
+   192525314 Arun ECE 7.8
+findById(313)    : 192525313 Divya CSE 9.1
+findById(999)    : null
+update cgpa 7.8->8.0 rows: 1
+delete(192525313) rows   : 1
+findAll() after  : 
+   192525312 Vijayan P CSE 8.4
+   192525314 Arun ECE 8.0
+
+Object-table mapping (from ResultSetMetaData):
+   column 1: reg_no   INTEGER   
+   column 2: name     VARCHAR   
+   column 3: dept     VARCHAR   
+   column 4: cgpa     REAL      
+   primary key: reg_no

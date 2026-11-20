@@ -1,0 +1,9 @@
+ns to CREATE one exception object (n = 100000)
+depth        with stack     no stack trace
+1                   361                  4
+10                  686                  9
+50                 1530                 42
+200                4932                185
+1000              21517                968
+
+Memory held per exception object with a 50-frame trace: about 1412 bytes

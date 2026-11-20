@@ -1,0 +1,18 @@
+T1: account=1234, amount="2000"
+  Dispensed 2000, new balance 3000
+  finally: card returned, session closed
+T2: account=1234, amount="abc"
+  catch#1 (bad input): NumberFormatException
+  finally: card returned, session closed
+T3: account=1234, amount="-500"
+  catch#2 (illegal value): Amount cannot be negative: -500
+  finally: card returned, session closed
+T4: account=1234, amount="9000"
+  catch#4 (balance): Requested 9000 but balance is 3000
+  finally: card returned, session closed
+T5: account=9999, amount="100"
+  catch#3 (card reader): card_9999.dat (card-reader file) not found
+  finally: card returned, session closed
+T6: account=1234, amount=null
+  catch#1 (bad input): NullPointerException
+  finally: card returned, session closed

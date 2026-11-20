@@ -1,0 +1,14 @@
+-- 1. original PassStore.find() (checks only the field count) --
+find(P2001) -> [P2001, 192311001, Arun, 12, 4500.0]
+find(P2002) -> null
+find(P2003) -> [P2003, 192311003, Karthik, 9, abc]
+find(P2005) -> [P2005, 192311005, Meena, 3, 3900.0]
+   >> P2003 is returned with amount 'abc': the field-count check is NOT enough
+
+-- 2. validating reader (PassValidator) --
+line 1  P2001,192311001,Arun,12,4500.0     OK
+line 2  P2002,192311002,Divya,7            REJECTED: wrong field count (4)
+line 3  P2003,192311003,Karthik,9,abc      REJECTED: non-numeric amount 'abc'
+line 4  (empty)                            REJECTED: empty line
+line 5  P2005,192311005,Meena,3,3900.0     OK
+2 valid, 3 rejected, no exception thrown, search continues

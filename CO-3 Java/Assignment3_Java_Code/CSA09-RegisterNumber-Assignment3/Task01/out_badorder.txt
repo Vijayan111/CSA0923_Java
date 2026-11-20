@@ -1,0 +1,4 @@
+BadOrder.java:7: error: exception FileNotFoundException has already been caught
+        catch (FileNotFoundException e) { System.out.println("specific"); }
+        ^
+1 error

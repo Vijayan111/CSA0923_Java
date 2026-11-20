@@ -1,0 +1,4 @@
+counter size after each operation (P=put, T=take):
+P=1 P=2 P=3 P=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 P=5 T=4 T=3 T=2 T=1 T=0 
+smallest size seen = 0, largest size seen = 5  (allowed 0..5)
+sum collected = 210

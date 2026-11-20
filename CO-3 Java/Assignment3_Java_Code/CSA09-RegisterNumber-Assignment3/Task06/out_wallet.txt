@@ -1,0 +1,8 @@
+== Part A1: unsafe transfers  T1: A->B 100   T2: B->A 50 ==
+after 1 s: T1 state=BLOCKED, T2 state=BLOCKED
+deadlock detected: true, threads involved = 2
+  T1 is BLOCKED waiting for Account@34a245ab held by T2
+  T2 is BLOCKED waiting for Account@7cc355be held by T1
+
+== Part A2: ordered locking, same two transfers ==
+both finished in 200 ms; balances: A=950, B=1050 (total 2000)

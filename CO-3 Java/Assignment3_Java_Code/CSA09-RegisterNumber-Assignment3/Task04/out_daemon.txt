@@ -1,0 +1,6 @@
+Station-D daemon = true
+Station-D scanned script 1
+Station-D scanned script 2
+Station-D scanned script 3
+Station-D scanned script 4
+main() ends now

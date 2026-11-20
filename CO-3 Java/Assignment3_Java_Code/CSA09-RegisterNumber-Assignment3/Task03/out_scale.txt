@@ -1,0 +1,5 @@
+f files    try-with-resources (ms)   finally+close (ms)   handles open at once
+500        2.07                      2.20                 1 (sequential)
+1000       4.99                      4.49                 1 (sequential)
+2000       6.33                      6.31                 1 (sequential)
+4000       17.23                     16.96                1 (sequential)

@@ -1,0 +1,4 @@
+Seats sold over 10 runs (correct answer = 10 every time)
+A: no sync, plain check-then-act            10  10  10  10  10  10  10  10  10  10   wrong runs=0, extra seats sold=0
+B: no sync, 1 ms between check and act      30  36  40  32  38  40  40  34  40  40   wrong runs=10, extra seats sold=270
+C: synchronized                             10  10  10  10  10  10  10  10  10  10   wrong runs=0, extra seats sold=0

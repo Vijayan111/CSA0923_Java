@@ -1,0 +1,23 @@
+== A1.1 text layout: delimiter handling ==
+raw name        : Arun, K\nS
+stored line     : P000042,192311042,Arun%2C K%0AS,12,Anna Nagar%2C Gate 2,20271031,4500.0,fd9ebd0a
+fields found    : 8   name restored: Arun, K\nS
+
+== A1.3 damaged-data checks ==
+good line                      -> ACCEPTED
+truncated mid-CRC (power cut)  -> REJECTED: CRC mismatch (damaged or incomplete write)
+cut after last field           -> REJECTED: field count 7 (need 8)
+edited amount                  -> REJECTED: CRC mismatch (damaged or incomplete write)
+wrong field count              -> REJECTED: field count 3 (need 8)
+empty line                     -> REJECTED: empty line
+missing file                   -> handled: NoSuchFileException(no_such_passes.csv), start with an empty store
+
+== sizes for 8000 passes (one year) ==
+text (CSV + CRC)        :   530,491 bytes  (66.3 B/record, variable)
+binary DataOutputStream :   452,893 bytes  (56.6 B/record, variable)
+RandomAccessFile fixed  :   752,000 bytes  (94 B/record, fixed)
+padding waste vs binary : 39.8 %  of the fixed file is padding
+
+== find pass P007999: scan vs seek ==
+text scan  O(n):   1948.9 us (best of 40)
+RAF seek   O(1):     36.7 us (best of 40)   -> x53 faster

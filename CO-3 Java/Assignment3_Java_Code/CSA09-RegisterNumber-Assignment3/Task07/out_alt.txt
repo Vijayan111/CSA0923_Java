@@ -1,0 +1,14 @@
+common pool parallelism = 1
+
+1) parallelStream, failure NOT handled inside the lambda:
+   stream aborted after 14 of 10000 files: CorruptFileException
+
+2) parallelStream, failure caught per file:
+  OK=9700 CORRUPT=200 MISSING=100 ERROR=0 | accounted=10000 of 10000 | total marks=1454835 | 5840 ms
+
+3) one platform thread per file (10,000 threads):
+  OK=9700 CORRUPT=200 MISSING=100 ERROR=0 | accounted=10000 of 10000 | total marks=1454835 | 1324 ms
+   peak live threads = 69, RSS before 79 MB, after 85 MB (default stack = 1 MB reserved per thread)
+
+4) bonus: virtual threads (Java 21):
+  OK=9700 CORRUPT=200 MISSING=100 ERROR=0 | accounted=10000 of 10000 | total marks=1454835 | 449 ms

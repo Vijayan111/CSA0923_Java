@@ -1,0 +1,9 @@
+10,000 files, simulated latency 1 ms per file, cores available = 1
+threads  time(ms)  speedup  OK        CORRUPT MISSING   
+1        11919     1.00     9700      200     100       
+2        5823      2.05     9700      200     100       
+4        2899      4.11     9700      200     100       
+8        1464      8.14     9700      200     100       
+16       740       16.11    9700      200     100       
+64       247       48.26    9700      200     100       
+256      284       41.97    9700      200     100       

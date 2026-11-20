@@ -1,0 +1,22 @@
+cook delay between tokens = 0 ms, 10 runs:
+  run 1: sum 210 (correct)
+  run 2: sum 210 (correct)
+  run 3: sum 210 (correct)
+  run 4: sum 210 (correct)
+  run 5: sum 210 (correct)
+  run 6: sum 210 (correct)
+  run 7: WRONG sum 135, count=0
+  run 8: sum 210 (correct)
+  run 9: sum 210 (correct)
+  run 10: sum 210 (correct)
+cook delay between tokens = 1 ms, 10 runs:
+  run 1: WRONG sum 12, count=0
+  run 2: WRONG sum 12, count=0
+  run 3: WRONG sum 12, count=0
+  run 4: WRONG sum 12, count=0
+  run 5: WRONG sum 12, count=0
+  run 6: WRONG sum 12, count=0
+  run 7: WRONG sum 12, count=0
+  run 8: WRONG sum 12, count=0
+  run 9: WRONG sum 12, count=0
+  run 10: WRONG sum 12, count=0

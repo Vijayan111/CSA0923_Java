@@ -1,0 +1,31 @@
+== 1. Why transient: Connection field without transient ==
+without transient: java.io.NotSerializableException: org.sqlite.jdbc4.JDBC4Connection
+
+== 2. Serialize the Hostel (v1 class, no phone field) ==
+saved /tmp/a4build/hostel_uid.ser (316 bytes) with class Resident
+saved /tmp/a4build/hostel_nouid.ser (316 bytes) with class Resident
+
+== 3. Reload with v1 class: transient fields come back as null, shared Arun is still ONE object ==
+loaded Block-A: rooms=2
+  room 101 -> [Arun(1, pwd=null, conn=null), Divya(2, pwd=null, conn=null)]
+  room 102 -> [Arun(1, pwd=null, conn=null)]
+  same Arun object in both rooms after reload: true
+
+== 4. Phone added (v2). Old file + class WITH serialVersionUID = 1L ==
+loaded Block-A: rooms=2
+  room 101 -> [Arun(1, pwd=null, conn=null, phone=null), Divya(2, pwd=null, conn=null, phone=null)]
+  room 102 -> [Arun(1, pwd=null, conn=null, phone=null)]
+  same Arun object in both rooms after reload: true
+
+== 5. Phone added (v2). Old file + class WITHOUT serialVersionUID ==
+FAILED: java.io.InvalidClassException: Resident; local class incompatible: stream classdesc serialVersionUID = -5472059439467760698, local class serialVersionUID = 5718433398541835376
+
+== 6. Alternative: serialization vs CSV vs JSON ==
+n         format            size (KB)  save (ms)  load (ms)
+10000     serialization           360       16.2       33.2
+10000     CSV                     321       16.9       35.1
+10000     JSON (hand-made)        604       25.4       n/a*
+100000    serialization          3700      149.0      112.7
+100000    CSV                    3309       73.4      182.9
+100000    JSON (hand-made)       6141       58.8       n/a*
+* no JSON library offline: a real parser (e.g. Jackson/Gson) would be slower than the token scan I timed, so it is not reported

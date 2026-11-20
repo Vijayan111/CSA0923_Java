@@ -1,0 +1,11 @@
+records   file KB     find last (ms)* find random (ms) listByRoute (ms)
+1000      33                     0.71             0.68             0.31
+5000      165                    0.87             1.33             1.08   (x1.2 vs previous; records x5)
+10000     331                    1.32             0.95             1.48   (x1.5 vs previous; records x2)
+50000     1659                   6.68             3.73             7.31   (x5.1 vs previous; records x5)
+100000    3319                  13.31             6.54            13.92   (x2.0 vs previous; records x2)
+
+q = 1000 searches on n = 100000 passes
+  scan every time      :    6822.6 ms   memory ~ O(1) (one line at a time)
+  HashMap, load once   :     139.4 ms load + 0.79 ms for 1000 lookups = 140.2 ms   memory ~ 33 MB
+  speed-up for q = 1000   : x49

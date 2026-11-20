@@ -1,0 +1,26 @@
+== B3.1 correctness on 10 records, each approach ==
+Statement           rows=10
+PreparedStatement   rows=10
+PreparedStatement+batch rows=10 (returned) / 10 (SELECT COUNT)
+   col 1 pass_id   VARCHAR  (JDBC type java.lang.String)
+   col 2 reg_no    VARCHAR  (JDBC type java.lang.String)
+   col 3 name      VARCHAR  (JDBC type java.lang.String)
+   col 4 route_no  INT      (JDBC type java.lang.Integer)
+   col 5 amount    DOUBLE   (JDBC type java.lang.Double)
+   P000001 192300001 Anitha   23 5474.0
+   P000002 192300002 Ravi      7 3605.0
+   P000003 192300003 Ravi     12 3722.0
+
+== B3.2 time (ms): auto-commit ON for (a) and (b); (c) = PassLoader.loadAll, one transaction ==
+rows       (a) Statement (b) PreparedStatement   (c) PrepStmt + batch
+1000             1062 ms               767 ms                  13 ms   rows ok: true
+10000            7614 ms              6434 ms                  36 ms   rows ok: true
+100000          68177 ms             59268 ms                 264 ms   rows ok: true
+
+== B3.3 batch insert of 100,000: auto-commit ON vs one transaction ==
+auto-commit ON  :    60837 ms
+ one transaction  :      235 ms   (x258.4)
+
+-- forced failure: record 5,001 of 10,000 has amount 'ABC' --
+auto-commit ON : NumberFormatException -> rows left in table: 5000
+one transaction: NumberFormatException -> rows left in table: 0

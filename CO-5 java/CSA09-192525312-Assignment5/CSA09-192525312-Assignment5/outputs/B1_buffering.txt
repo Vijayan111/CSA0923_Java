@@ -1,0 +1,4 @@
+size     lines      unbuffered     byte[8192] BufferedReader   readAllLines
+1 MB     29128        248.5 ms         2.5 ms        15.7 ms         6.1 ms   (x100)
+10 MB    291272      2425.8 ms         4.0 ms        27.9 ms        66.6 ms   (x601)
+50 MB    1456356    12448.4 ms        21.4 ms        61.9 ms       247.9 ms   (x581)

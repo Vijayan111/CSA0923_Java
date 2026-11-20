@@ -1,0 +1,3 @@
+12 serialized files : 800,004 passes, 44.1 MB total, save 1316 ms, search every file for one ID: 893 ms (best of 3, found=3)
+one shared database : 800,004 rows, 52.0 MB file, load 1868 ms, find one ID by PRIMARY KEY: 0.026 ms
+search speed ratio  : x34,436 in favour of the indexed database

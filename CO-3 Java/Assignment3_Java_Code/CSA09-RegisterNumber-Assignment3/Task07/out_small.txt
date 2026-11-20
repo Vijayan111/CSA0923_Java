@@ -1,0 +1,12 @@
+Hand-check: files 0-5 valid (totals 60,63,66,69,72,75 = 405), 6 and 7 corrupt, 8 and 9 missing
+  OK=6 CORRUPT=2 MISSING=2 ERROR=0 | accounted=10 of 10 | total marks=405 | 32 ms
+  score00000.txt OK       total 60
+  score00001.txt OK       total 63
+  score00002.txt OK       total 66
+  score00003.txt OK       total 69
+  score00004.txt OK       total 72
+  score00005.txt OK       total 75
+  score00006.txt CORRUPT  score00006.txt: mark 'x' is not a number
+  score00007.txt CORRUPT  score00007.txt: mark 200 outside 0..100
+  score00008.txt MISSING  file not found
+  score00009.txt MISSING  file not found

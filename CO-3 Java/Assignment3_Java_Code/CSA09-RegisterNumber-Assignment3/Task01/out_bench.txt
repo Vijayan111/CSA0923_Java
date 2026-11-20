@@ -1,0 +1,10 @@
+ns per call (average of 300000 calls)
+case                                      valid  invalid
+parseInt + catch (exception)                 52      716
+pre-check + error code (-1)                 140        7
+
+Exception thrown at different stack depths (ns per throw+catch)
+  depth 1        1101 ns
+  depth 10       1098 ns
+  depth 50       1811 ns
+  depth 200      5337 ns

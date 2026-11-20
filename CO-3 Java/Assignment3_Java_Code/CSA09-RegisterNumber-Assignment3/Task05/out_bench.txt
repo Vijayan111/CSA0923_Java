@@ -1,0 +1,14 @@
+10,000 bookings, 8 threads, 1000 seats, simulated work per booking = 0 us   (median of 5, ms)
+  synchronized method          0.8 ms
+  synchronized block           1.2 ms
+  AtomicBoolean[] CAS          0.8 ms
+  ReentrantLock                0.9 ms
+  ConcurrentHashMap            5.0 ms
+
+10,000 bookings, 8 threads, 1000 seats, simulated work per booking = 100 us   (median of 5, ms)
+  synchronized method       1639.9 ms
+  synchronized block         205.8 ms
+  AtomicBoolean[] CAS        209.3 ms
+  ReentrantLock              203.5 ms
+  ConcurrentHashMap          205.8 ms
+

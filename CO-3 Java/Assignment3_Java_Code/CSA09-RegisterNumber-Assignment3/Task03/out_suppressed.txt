@@ -1,0 +1,8 @@
+open  input-file
+open  summary-writer
+body runs
+close summary-writer
+close input-file
+caught   : read failed (primary)
+suppressed: close failed: summary-writer
+suppressed: close failed: input-file

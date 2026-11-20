@@ -1,0 +1,24 @@
+read 20000 lines: 19994 valid, 6 failed validation
+loaded 19994 rows in one transaction (batches of 1000) in 123 ms; SELECT COUNT(*) = 19994  -> MATCH
+
+FAILURE REPORT (rows NOT migrated - to be fixed by hand):
+  line 100    P000100,19230010                         wrong field count (2)
+  line 500    P000500,192300500,Ravi,12,free           non-numeric amount 'free'
+  line 2000   (empty)                                  empty line
+  line 3000   P000001,192303000,Meena,5,4100.0         duplicate pass ID P000001
+  line 8000   P008000,192308000,Anitha,177,3900.0      route out of range 177
+  line 12000  P012000,19230,Divya,4,3900.0             bad register number '19230'
+
+== B4.2 DatabaseMetaData ==
+database product : SQLite 3.42.0
+driver           : SQLite JDBC 3.42.0.0
+JDBC version     : 4.2
+URL              : jdbc:sqlite:<file>
+supports transactions: true   batch updates: true
+table            : bus_pass
+   column pass_id   VARCHAR
+   column reg_no    VARCHAR
+   column name      VARCHAR
+   column route_no  INT
+   column amount    DOUBLE
+   primary key: pass_id

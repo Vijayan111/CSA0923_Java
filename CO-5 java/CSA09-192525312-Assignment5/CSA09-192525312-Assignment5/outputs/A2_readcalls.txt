@@ -1,0 +1,13 @@
+attendance log: 52,428,816 bytes (50.0 MB)
+
+strategy                                       read calls        lines
+FileInputStream.read() one byte at a time      52,428,817    1,456,356
+BufferedInputStream (8 KB buffer)                   6,402    1,456,356
+byte[65536] array buffer                              802    1,456,356
+
+predicted unbuffered calls = file size + 1 (EOF) = 52,428,817
+predicted 8 KB buffered    = ceil(52,428,816 / 8192) + 1 = 6,402
+reduction in calls         = x8,189
+
+Files.readAllLines(): 1,456,356 lines held in memory, about 118 MB of heap for a 50 MB file
+BufferedInputStream: heap used by the buffer = 8 KB (independent of file size)

@@ -1,0 +1,16 @@
+  start:                                canteen=200  hostel=1000  total=1200
+
+Case 1: two auto-commit statements, failure between them
+  exception: simulated failure between the two updates
+  after failure:  (500 LOST)            canteen=200  hostel=500  total=700
+
+Case 2: one transaction (setAutoCommit(false) / commit / rollback), same failure
+  exception: simulated failure between the two updates
+  after rollback: (nothing lost)        canteen=200  hostel=1000  total=1200
+
+Case 3: one transaction, no failure
+  after commit:                         canteen=700  hostel=500  total=1200
+
+Case 4: transfer 900 more (hostel only has 500) -> CHECK constraint stops it, rollback
+  exception: [SQLITE_CONSTRAINT_CHECK] A CHECK constraint failed (CHECK constraint failed: balance >= 0)
+  after rollback:                       canteen=700  hostel=500  total=1200

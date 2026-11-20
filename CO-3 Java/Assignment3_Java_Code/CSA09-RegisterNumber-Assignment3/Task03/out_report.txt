@@ -1,0 +1,25 @@
+== Same input, no failure: do all versions give the same report? ==
+  reports identical: true   (open store files now: 0)
+goodData/store1.csv,940.0
+goodData/store2.csv,940.0
+goodData/store3.csv,940.0
+goodData/store4.csv,940.0
+goodData/store5.csv,940.0
+TOTAL,4700.0
+
+== store4.csv is corrupt: run each version ==
+V1 manual close() in try:
+  [LOG] FAILED file=badData/store4.csv line=2 value='x'
+  exception: Corrupt data in badData/store4.csv line 2
+  V1 naive manual        open store files after failure: 2   summary file size: 0 bytes
+
+V2 try-catch-finally:
+  [LOG] FAILED file=badData/store4.csv line=2 value='x'
+  exception: Corrupt data in badData/store4.csv line 2
+  V2 finally close       open store files after failure: 0   summary file size: 75 bytes
+
+V3 try-with-resources:
+  [LOG] FAILED file=badData/store4.csv line=2 value='x'
+  exception: Corrupt data in badData/store4.csv line 2
+  V3 try-with-resources  open store files after failure: 0   summary file size: 75 bytes
+

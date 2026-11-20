@@ -1,0 +1,8 @@
+Producer-consumer, 200,000 tokens, capacity 5, 1 cook + 2 students
+  wait()/notifyAll()   :   214 ms  (1.07 us per token)  sum=20000100000
+  ArrayBlockingQueue(5):   202 ms  (1.01 us per token)  sum=20000100000
+  expected sum = 20000100000
+
+Opposing wallet transfers, 2 threads x 100,000 (total money checked)
+  lock ordering (synchronized):   0.05 us per transfer
+  tryLock(10 ms) + back-off    :   0.08 us per transfer

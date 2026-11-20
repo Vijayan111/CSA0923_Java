@@ -1,0 +1,16 @@
+valid login   (id=admin  pwd=S3cret#26)
+   SQL sent : SELECT * FROM users WHERE id='admin' AND pwd='S3cret#26'
+   unsafe version: LOGIN OK  PreparedStatement: LOGIN OK
+
+wrong password   (id=admin  pwd=guess)
+   SQL sent : SELECT * FROM users WHERE id='admin' AND pwd='guess'
+   unsafe version: rejected  PreparedStatement: rejected
+
+ATTACK 1: OR '1'='1   (id=admin  pwd=x' OR '1'='1)
+   SQL sent : SELECT * FROM users WHERE id='admin' AND pwd='x' OR '1'='1'
+   unsafe version: LOGIN OK  PreparedStatement: rejected
+
+ATTACK 2: comment out   (id=admin'--  pwd=anything)
+   SQL sent : SELECT * FROM users WHERE id='admin'--' AND pwd='anything'
+   unsafe version: LOGIN OK  PreparedStatement: rejected
+

@@ -1,0 +1,13 @@
+-- escaping quotes stops the string attack --
+   SELECT * FROM users WHERE id='admin' AND pwd='x'' OR ''1''=''1'
+   login accepted: false
+-- ...but not a numeric context (no quotes to escape) --
+   SELECT COUNT(*) FROM bus_pass WHERE route_no=99 OR 1=1
+   rows returned for route 99 (should be 0): 3
+   PreparedStatement, same input as a value: 0 rows
+
+time per query over 20000 queries (best of 7 runs):
+   PreparedStatement (reused)      :   1.21 us
+   Statement + escape quotes        :   3.24 us
+   Statement + regex validation     :   3.43 us
+   regex match alone                :  0.284 us per call (String.matches, compiled each time)

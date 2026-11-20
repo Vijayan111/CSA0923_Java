@@ -1,0 +1,4 @@
+Saved answer01.pdf
+Error: Could not store answer02.pdf
+Exception in thread "main" java.lang.NullPointerException: Cannot invoke "java.lang.Throwable.getMessage()" because the return value of "ExamException.getCause()" is null
+	at StorageDemo.main(StorageDemo.java:34)

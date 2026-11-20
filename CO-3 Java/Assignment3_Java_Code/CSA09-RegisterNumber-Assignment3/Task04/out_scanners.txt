@@ -1,0 +1,41 @@
+== 1. Life cycle and join() ==
+before start : NEW alive=false
+after start  : RUNNABLE alive=true
+while sleeping: TIMED_WAITING
+after join   : TERMINATED alive=false
+Total scripts scanned (printed after join) = 160   finish order: B C D A
+
+== 2. run() instead of start() ==
+main prints own name : main
+body executed by      : main
+body executed by      : T-probe
+(first line = run() on the main thread; second = start() on T-probe)
+
+== 3. Finish order over 10 runs (equal batches of 40) ==
+run  1 : B A C D
+run  2 : D B A C
+run  3 : A B C D
+run  4 : A B D C
+run  5 : C A D B
+run  6 : C B A D
+run  7 : A D B C
+run  8 : A B D C
+run  9 : C D B A
+run 10 : D B C A
+
+== 4. Priorities (A=10, B=1, C=5, D=5) over 10 runs ==
+run  1 : A C D B
+run  2 : D C A B
+run  3 : C A D B
+run  4 : D C A B
+run  5 : A B D C
+run  6 : C B A D
+run  7 : A C D B
+run  8 : D B C A
+run  9 : B A C D
+run 10 : D C A B
+who finished first, count: {A=3, B=1, C=2, D=4}
+
+== 5. Same work with a fixed thread pool (p = 2, 4 stations) ==
+pool(2): 4 stations finished in 90 ms; threads used: [pool-1-thread-1, pool-1-thread-2]
+4 own threads: finished in 44 ms
